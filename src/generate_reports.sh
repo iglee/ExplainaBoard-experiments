@@ -1,7 +1,7 @@
 #!/bin/bash
 
 short_date=$(/bin/date +%m%d%y)
-exec 2>>"$short_date".log
+exec 2>>reports/"$2".log
 
 set -x
 

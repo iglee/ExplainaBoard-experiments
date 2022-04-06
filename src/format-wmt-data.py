@@ -1,4 +1,5 @@
 import glob, os
+import pandas as pd
 
 
 def get_files(input_dir):
@@ -12,39 +13,29 @@ def generate_formatted_files(input_dir, label_dir, output_root_dir, formatted_di
     """
     given input, label, and output directories, format the files for ExplainaBoard experiments
     """
-    input_files = get_files(input_dir)
+    # input_files = get_files(input_dir)
     ref_files = get_files(label_dir)
 
-    for file in input_files:
-        task, lang_pair, _, _ = file.split(".")
+    for file in ref_files:
+        task, lang_pair, _, _, _ = file.split(".")
         # for now, i'll default to ref-A
-        inputs = open(input_dir + "/" + file, "r").read().splitlines()
-        labels = None
+        labels = open(label_dir + "/" + file, "r").read().splitlines()
 
-        for ref in ["ref-A", "ref-B", "ref-C", "ref-D"]:
-
-            ref_file = ".".join([task, lang_pair, "ref", ref, lang_pair.split("-")[-1]])
-
-            if ref_file in ref_files:
-                # print(ref_file)
-                labels = open(label_dir + "/" + ref_file, "r").read().splitlines()
-                if len(inputs) == len(labels):
-                    # print(file, ref_file)
-                    cnt += 1
+        input_file = ".".join([task, lang_pair, "src", lang_pair.split("-")[0]])
+        inputs = open(input_dir + "/" + input_file, "r").read().splitlines()
 
         output_dir = output_root_dir + "/{}/{}".format(task, lang_pair)
-
         output_files = get_files(output_dir)
-
         for hyp_file in output_files:
             outputs = open(output_dir + "/" + hyp_file).read().splitlines()
             team_name = hyp_file.split(".")[-2]
             formatted_file = ".".join([task, lang_pair, team_name])
-            with open(formatted_dir + "/" + formatted_file + ".tsv", "w") as f:
-                for i in range(len(inputs)):
-                    f.write("\t".join([inputs[i], labels[i], outputs[i]]) + "\n")
 
-            f.close()
+            # print(len(inputs) == len(outputs) == len(labels))
+            data = {"inputs": inputs, "labels": labels, "outputs": outputs}
+            pd.DataFrame(data).to_csv(
+                formatted_dir + "/" + formatted_file + ".tsv", sep="\t", header=False
+            )
 
 
 if __name__ == "__main__":

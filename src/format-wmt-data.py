@@ -14,20 +14,23 @@ def generate_formatted_files(input_dir, label_dir, output_root_dir, formatted_di
     """
     input_files = get_files(input_dir)
     ref_files = get_files(label_dir)
+
     for file in input_files:
         task, lang_pair, _, _ = file.split(".")
         # for now, i'll default to ref-A
-        inputs, labels = [], []
+        inputs = open(input_dir + "/" + file, "r").read().splitlines()
+        labels = None
 
         for ref in ["ref-A", "ref-B", "ref-C", "ref-D"]:
-            ref_file = ".".join(
-                [task, lang_pair, "ref", "ref-A", lang_pair.split("-")[-1]]
-            )
-            if ref_file in label_dir:
-                inputs = open(input_dir + "/" + file, "r").read().splitlines()
+
+            ref_file = ".".join([task, lang_pair, "ref", ref, lang_pair.split("-")[-1]])
+
+            if ref_file in ref_files:
+                # print(ref_file)
                 labels = open(label_dir + "/" + ref_file, "r").read().splitlines()
                 if len(inputs) == len(labels):
-                    break
+                    # print(file, ref_file)
+                    cnt += 1
 
         output_dir = output_root_dir + "/{}/{}".format(task, lang_pair)
 

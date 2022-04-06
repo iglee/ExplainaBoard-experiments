@@ -34,7 +34,10 @@ def generate_formatted_files(input_dir, label_dir, output_root_dir, formatted_di
             # print(len(inputs) == len(outputs) == len(labels))
             data = {"inputs": inputs, "labels": labels, "outputs": outputs}
             pd.DataFrame(data).to_csv(
-                formatted_dir + "/" + formatted_file + ".tsv", sep="\t", header=False
+                formatted_dir + "/" + formatted_file + ".tsv",
+                sep="\t",
+                header=False,
+                index=False,
             )
 
 

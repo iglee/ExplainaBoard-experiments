@@ -96,8 +96,27 @@ def gather_coefficients(bootstrapped_pipelines, metrics, features):
     return coefficients
 
 
+def feature_importances(model, features):
+    # for simple linear regression only
+
+    importances = model.named_steps["regression"].coef_
+
+    # use np indexing to order the feature names to increasing order of importances
+    ords = np.flip(np.argsort(importances), axis=1)
+    importances = importances[np.array([0, 1, 2])[:, np.newaxis], ords]
+    feats_match = np.array(features)[ords]
+
+    ret = {}
+
+    for i, metric in enumerate(metrics):
+        ret[metric] = {"features": feats_match[i], "importance_vals": importances[i]}
+
+    return ret
+
+
 def print_results(model, feats, df):
     test_pred = model.predict(df[feats])
     mse = mean_squared_error(test_pred, df[metrics])
     r2 = r2_score(df[metrics], test_pred)
     print("mse error: {}, r2 score: {}".format(mse, r2))
+

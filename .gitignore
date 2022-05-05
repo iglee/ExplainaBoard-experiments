@@ -162,6 +162,7 @@ cython_debug/
 # exclude data file
 data/
 reports/
+output/
 
 # ds store
 .DS_Store

@@ -9,6 +9,6 @@ for keeping track of experiments done with ExplanaBoard
     - trains pipelines using bootstrapping, 
     - get feature importances
     - prints results (MSE and R2).
-- 
+- `src/generate_reports.sh` : generates reports from explainaboard from a given input directory
 - `sample_data`: for now, I have a `pkl` of a data frame to be used for regression related models.
 - `notebooks/linear-regression-analysis.ipynb`: notebook containing results/plots/analysis so far, related to regression models. mostly linear regression was explored, but I tried out SVM and GPR as non-linear examples.

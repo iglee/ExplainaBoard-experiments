@@ -163,6 +163,7 @@ cython_debug/
 data/
 reports/
 output/
+notebook/lang2vec
 
 # ds store
 .DS_Store

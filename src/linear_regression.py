@@ -116,7 +116,10 @@ def feature_importances(model, features):
 
 def print_results(model, feats, df):
     test_pred = model.predict(df[feats])
-    mse = mean_squared_error(test_pred, df[metrics])
-    r2 = r2_score(df[metrics], test_pred)
-    print("mse error: {}, r2 score: {}".format(mse, r2))
+
+    for i, metric in enumerate(metrics):
+        results = [x[i] for x in test_pred]
+        mse = mean_squared_error(df[metric], results)
+        r2 = r2_score(df[metric], results)
+        print("for metric: {}, mse error: {}, r2 score: {}".format(metric, mse, r2))
 

@@ -1,4 +1,5 @@
 import os
+from collections import Counter
 import pycountry
 import bnlp  # bengali
 import jieba  # chinese
@@ -100,5 +101,5 @@ class WMT21TrainData:
     def subword_tokenize(self):
         pass
 
-    def word_overlap(self):
-        pass
+    def word_overlap(self, datum):
+        return len(self.types & datum.types) / (len(self.types) + len(datum.types))

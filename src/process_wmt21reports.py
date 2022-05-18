@@ -18,6 +18,7 @@ class WMT21ReportData:
         self.target_lang_3 = self.iso2_to_3(self.target_lang_2)
         self.data = {filename: self.read_file(filename)}
         self.metrics = {}
+        self.fine_grained_results = {}
         self.uriel_distances = {}
         self.get_uriel_distances()
 
@@ -48,6 +49,34 @@ class WMT21ReportData:
         if data:
             metric_value = data["results"]["overall"][metric]["value"]
             self.metrics[metric] = metric_value
+
+    def process_fine_grained_results(self, data):
+        ret = {}
+
+        for k, v in data.items():
+            temp = {}
+            for k1, v1 in v.items():
+                v2 = v1["performances"][0]
+                temp[tuple(v1["bucket_name"])] = (
+                    v2["value"],
+                    v2["confidence_score_low"],
+                    v2["confidence_score_high"],
+                )
+            ret[v2["metric_name"] + "|" + k] = temp
+        return ret
+
+    def get_fine_grained_results(self, metric, filename=None):
+        if filename:
+            data = self.read_file(filename)
+            self.data[filename] = data
+        else:
+            data = self.data[self.filename]
+
+        if data:
+            fine_grained_results = self.process_fine_grained_results(
+                data["results"]["fine_grained"]
+            )
+            self.fine_grained_results[metric] = fine_grained_results
 
     def get_uriel_distances(self):
 

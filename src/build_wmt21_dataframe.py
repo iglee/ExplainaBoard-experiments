@@ -35,17 +35,20 @@ report_set = {}
 for file in glob.glob(moverscore_reports + "*"):
     data = WMT21ReportData(file)
     data.get_metrics("mover_score")
+    data.get_fine_grained_results("mover_score")
     report_set[data.basename] = data
 
 for file in glob.glob(bleu_reports + "*"):
     base = basename(file)
     data = report_set[base]
     data.get_metrics("bleu", filename=file)
+    data.get_fine_grained_results("bleu", filename=file)
 
 for file in glob.glob(rouge2_reports + "*"):
     base = basename(file)
     data = report_set[base]
     data.get_metrics("rouge2", filename=file)
+    data.get_fine_grained_results("rouge2", filename=file)
 
 total_data = []
 missing_train_data = []
@@ -63,6 +66,10 @@ for report in report_set.values():
 
         for k, v in report.metrics.items():
             datum[k] = v
+
+        for k, v in report.fine_grained_results.items():
+            for k1, v1 in v.items():
+                datum[k + "|" + k1] = v1
 
         source_key = ".".join([report.dataset, report.langpair, report.source_lang_2])
         source_data = train_set[source_key]
@@ -86,4 +93,4 @@ for report in report_set.values():
         missing_train_data.append(report.basename)
 
 df = pd.DataFrame(total_data).dropna()
-df.to_pickle("../data/wmt21_processed_data.pkl")
+df.to_pickle("../data/wmt21_processed_data_fine_grained.pkl")
